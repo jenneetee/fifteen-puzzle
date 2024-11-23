@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+#puzzle-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border: 2px solid black;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: repeat(4, 100px);
+}
+
+.tile {
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    border: 2px solid black;
+    font-size: 32px;
+    font-family: sans-serif;
+    line-height: 96px;
+    text-align: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    background-image: url('img/background.jpg');
+    background-size: 400px 400px;
+    transition: transform 0.3s ease; /* Smooth sliding animation */
+}
+
+.movablepiece {
+    border-color: red;
+    color: #006600;
+    text-decoration: underline;
+}
+
+
+#shuffle-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
