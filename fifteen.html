@@ -7,10 +7,32 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="puzzle-container">
-        <!-- Tiles will be dynamically created using JavaScript -->
+    <div id="timer-container">
+        Time Elapsed: <span id="timer">0</span> seconds
     </div>
-    <button id="shuffle-button">Shuffle</button>
+    
+    <div id="puzzle-container">
+    </div>
+    <div id="controls">
+        <button id="shuffle-button">Shuffle</button>
+        <button id="new-game-button">New Game</button>
+        <label for="background-selector">Background:</label>
+        <select id="background-selector">
+            <option value="img/chiikawa-sleep.jpg">Background 1</option>
+            <option value="img/background.jpg">Background 2</option>
+            <option value="background3.jpg">Background 3</option>
+        </select>
+    </div>
+
+    <!-- Popup for completing the puzzle -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2>Congratulations!</h2>
+            <p>You have completed the puzzle!</p>
+            <button id="close-popup">Close</button>
+        </div>
+    </div>
+    
     <p class="validators">
         <a href="https://validator.w3.org/" target="_blank">
             <img src="https://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0">
