@@ -11,6 +11,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let timerInterval = null;
     let elapsedTime = 0;
     let gameInitialized = false; // Flag to track game initialization
+    let moveCounter = 0; // Move counter
+
+    // Audio element for background music
+    const backgroundMusic = document.getElementById("background-music");
+
+    // Create and display move counter
+    const moveCounterDisplay = document.createElement("div");
+    moveCounterDisplay.id = "move-counter";
+    moveCounterDisplay.style.marginTop = "10px";
+    moveCounterDisplay.textContent = `Moves Made: ${moveCounter}`;
+    document.body.insertBefore(moveCounterDisplay, puzzleContainer.nextSibling);
+
+    // Function to update the move counter display
+    function updateMoveCounter() {
+        moveCounterDisplay.textContent = `Moves Made: ${moveCounter}`;
+    }
+
+    // Function to reset the move counter
+    function resetMoveCounter() {
+        moveCounter = 0;
+        updateMoveCounter();
+    }
 
     // Update hover effects for tiles
     function updateHoverEffects() {
@@ -65,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 tile.style.backgroundImage = `url(${selectedBackground})`;
             }
         });
+        resetMoveCounter(); // Reset move counter when the background is updated
     }
 
     // Check if a tile can move into the blank space
@@ -83,6 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
             updateTilePosition(tile, blankPosition.x, blankPosition.y);
             blankPosition = { x: col, y: row };
             updateHoverEffects();
+
+            // Increment move counter on valid move
+            moveCounter++;
+            updateMoveCounter();
 
             // Check if the puzzle is completed after every move
             if (gameInitialized && isPuzzleComplete()) {
@@ -147,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         resetTimer();
+        resetMoveCounter(); // Reset move counter on shuffle
         startTimer();
         gameInitialized = true; // Mark the game as initialized
     }
@@ -177,13 +205,17 @@ document.addEventListener("DOMContentLoaded", () => {
         gameInitialized = false; // Reset game state
         createTiles(); // Create new tiles
         resetTimer(); // Reset the timer
+        resetMoveCounter(); // Reset the move counter
         updateHoverEffects(); // Reset hover effects
+        backgroundMusic.pause(); // Stop the music when game resets
+        backgroundMusic.currentTime = 0; // Reset the song to the beginning
     }
 
     // Start a new game
     function newGame() {
         resetGame();
         startTimer();
+        backgroundMusic.play(); // Start playing the song when a new game starts
     }
 
     // Initialize the game
