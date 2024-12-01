@@ -47,10 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         blankPosition = { x: 3, y: 3 }; // Reset blank position
-        updateHoverEffects();  // Now this function is defined before usage
+        updateHoverEffects(); // Update hoverable tile indicators
         updateTileBackground(); // Set initial background
     }
-    
 
     // Update the position of a tile using CSS transform
     function updateTilePosition(tile, x, y) {
@@ -161,12 +160,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Start a new game
     function newGame() {
         createTiles();
+        shuffleTiles(); // Shuffle the tiles after creating them
         resetTimer();
         startTimer();
     }
 
     // Initialize the game
     createTiles();
+    shuffleTiles(); // Shuffle tiles immediately after initial creation
     updateHoverEffects();
 
     // Event listeners
