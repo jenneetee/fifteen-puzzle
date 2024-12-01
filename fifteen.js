@@ -19,18 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const row = Math.round(tile.style.transform.match(/,\s*(-?\d+)px\)/)[1] / tileSize);
                 const col = Math.round(tile.style.transform.match(/\((-?\d+)px/)[1] / tileSize);
                 if (isMovable(row, col)) {
-                    tile.classList.add("movablepiece"); // Add class to indicate movability
+                    tile.classList.add("movablepiece");
                 } else {
-                    tile.classList.remove("movablepiece"); // Remove class if not movable
+                    tile.classList.remove("movablepiece");
                 }
             }
         });
     }
 
-    // Initialize the puzzle grid
+    // initialize puzzle grid
     function createTiles() {
-        puzzleContainer.innerHTML = ""; // Clear existing tiles
-        tiles = []; // Reset the tile array
+        puzzleContainer.innerHTML = "";
+        tiles = [];
         for (let row = 0; row < gridSize; row++) {
             tiles[row] = [];
             for (let col = 0; col < gridSize; col++) {
@@ -47,9 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-        blankPosition = { x: 3, y: 3 }; // Reset blank position
+        blankPosition = { x: 3, y: 3 };
         updateHoverEffects();
-        updateTileBackground(); // Set initial background
+        updateTileBackground();
     }
 
     // Update the position of a tile using CSS transform
@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Show the custom popup when the puzzle is completed
     function showPopup(time) {
         const popup = document.getElementById("popup");
         const popupMessage = document.querySelector(".popup-content p");
@@ -102,14 +101,14 @@ document.addEventListener("DOMContentLoaded", () => {
         timeDisplay.textContent = `You solved the puzzle in ${time} seconds!`;
 
         popupMessage.textContent = "Congratulations! You have completed the puzzle!";
-        popupMessage.appendChild(timeDisplay); // Add time display to the popup
+        popupMessage.appendChild(timeDisplay);
 
         popup.style.display = "flex";
 
         const closeButton = document.getElementById("close-popup");
         closeButton.addEventListener("click", () => {
             popup.style.display = "none";
-            resetGame(); // Reset the game when closing the popup
+            resetGame();
         });
     }
 
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return correct;
     }
 
-    // Shuffle the tiles randomly
     function shuffleTiles() {
         let moves = 300;
         while (moves > 0) {
@@ -155,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Timer Functions
     function startTimer() {
-        if (timerInterval) clearInterval(timerInterval); // Clear any previous intervals
+        if (timerInterval) clearInterval(timerInterval); // clears prev intervals
         elapsedTime = 0;
         timerElement.textContent = elapsedTime;
         timerInterval = setInterval(() => {
@@ -165,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function stopTimer() {
-        clearInterval(timerInterval); // Stop the timer when the puzzle is solved
+        clearInterval(timerInterval); // Stops when puzzle is solved
     }
 
     function resetTimer() {
