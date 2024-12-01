@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let moveCounter = 0; // Move counter
 
     // Audio element for background music
-    const backgroundMusic = document.getElementById("background-music");
+    const backgroundMusic = document.getElementById("game-music");
 
     // Create and display move counter
     const moveCounterDisplay = document.createElement("div");
@@ -239,4 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     shuffleButton.addEventListener("click", shuffleTiles);
     newGameButton.addEventListener("click", newGame);
     backgroundSelector.addEventListener("change", updateTileBackground);
+
+    // Play music as soon as the page is loaded
+    backgroundMusic.play();
 });
