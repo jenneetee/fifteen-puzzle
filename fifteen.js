@@ -10,17 +10,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let blankPosition = { x: 3, y: 3 };
     let timerInterval = null;
     let elapsedTime = 0;
+    let gameInitialized = false; // Flag to track game initialization
 
-    // Update hover effects for movable tiles
+    // Update hover effects for tiles
     function updateHoverEffects() {
         tiles.flat().forEach((tile) => {
             if (tile) {
                 const row = Math.round(tile.style.transform.match(/,\s*(-?\d+)px\)/)[1] / tileSize);
                 const col = Math.round(tile.style.transform.match(/\((-?\d+)px/)[1] / tileSize);
                 if (isMovable(row, col)) {
-                    tile.classList.add("movablepiece");
+                    tile.classList.add("movablepiece"); // Add class to indicate movability
                 } else {
-                    tile.classList.remove("movablepiece");
+                    tile.classList.remove("movablepiece"); // Remove class if not movable
                 }
             }
         });
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         blankPosition = { x: 3, y: 3 }; // Reset blank position
-        updateHoverEffects(); // Update hoverable tile indicators
+        updateHoverEffects();
         updateTileBackground(); // Set initial background
     }
 
@@ -84,20 +85,31 @@ document.addEventListener("DOMContentLoaded", () => {
             updateHoverEffects();
 
             // Check if the puzzle is completed after every move
-            if (isPuzzleComplete()) {
-                setTimeout(showPopup, 100); // Delay slightly to allow last move animation
+            if (gameInitialized && isPuzzleComplete()) {
+                setTimeout(() => {
+                    showPopup(elapsedTime); // Pass elapsed time to the popup
+                }, 100); // Delay slightly to allow last move animation
+                stopTimer(); // Stop the timer when the puzzle is solved
             }
         }
     }
 
     // Show the custom popup when the puzzle is completed
-    function showPopup() {
+    function showPopup(time) {
         const popup = document.getElementById("popup");
+        const popupMessage = document.querySelector(".popup-content p");
+        const timeDisplay = document.createElement("p");
+        timeDisplay.textContent = `You solved the puzzle in ${time} seconds!`;
+
+        popupMessage.textContent = "Congratulations! You have completed the puzzle!";
+        popupMessage.appendChild(timeDisplay); // Add time display to the popup
+
         popup.style.display = "flex";
 
         const closeButton = document.getElementById("close-popup");
         closeButton.addEventListener("click", () => {
             popup.style.display = "none";
+            resetGame(); // Reset the game when closing the popup
         });
     }
 
@@ -138,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         resetTimer();
         startTimer();
+        gameInitialized = true; // Mark the game as initialized
     }
 
     // Timer Functions
@@ -151,24 +164,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
+    function stopTimer() {
+        clearInterval(timerInterval); // Stop the timer when the puzzle is solved
+    }
+
     function resetTimer() {
         clearInterval(timerInterval);
         elapsedTime = 0;
         timerElement.textContent = elapsedTime;
     }
 
+    // Reset game after completion or a new game
+    function resetGame() {
+        gameInitialized = false; // Reset game state
+        createTiles(); // Create new tiles
+        resetTimer(); // Reset the timer
+        updateHoverEffects(); // Reset hover effects
+    }
+
     // Start a new game
     function newGame() {
-        createTiles();
-        shuffleTiles(); // Shuffle the tiles after creating them
-        resetTimer();
+        resetGame();
         startTimer();
     }
 
     // Initialize the game
     createTiles();
-    shuffleTiles(); // Shuffle tiles immediately after initial creation
     updateHoverEffects();
+    shuffleTiles(); // Shuffle tiles at the start of the game
 
     // Event listeners
     puzzleContainer.addEventListener("click", (event) => {
