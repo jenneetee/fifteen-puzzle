@@ -8,35 +8,34 @@ body {
 
 #puzzle-container {
     position: relative;
-    width: 400px;
-    height: 400px;
     border: 2px solid black;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(4, 100px);
-    grid-template-rows: repeat(4, 100px);
+    grid-template-columns: repeat(var(--grid-size, 4), 1fr); /* Use CSS variables for dynamic grid size */
+    grid-template-rows: repeat(var(--grid-size, 4), 1fr); 
+    width: calc(var(--grid-size, 4) * var(--tile-size, 100px)); 
+    height: calc(var(--grid-size, 4) * var(--tile-size, 100px));
 }
 
 .tile {
     position: absolute;
-    width: 96px;
-    height: 96px;
     border: 2px solid black;
-    font-size: 32px;
     font-family: sans-serif;
-    line-height: 96px;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box;
-    background-size: 400px 400px;
     transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, text-decoration 0.3s ease;
+    width: calc(var(--tile-size, 100px) - 4px); 
+    height: calc(var(--tile-size, 100px) - 4px);
+    font-size: calc(var(--tile-size, 100px) / 3); 
+    line-height: calc(var(--tile-size, 100px) - 4px);
+    background-size: calc(var(--grid-size, 4) * var(--tile-size, 100px)) calc(var(--grid-size, 4) * var(--tile-size, 100px));
 }
 
-
 .tile:hover.movablepiece {
-    border-color: red; 
+    border-color: red;
     color: #006600;
-    text-decoration: underline; 
+    text-decoration: underline;
 }
 
 #controls {
@@ -93,4 +92,10 @@ button {
     padding: 10px 15px;
     font-size: 16px;
     cursor: pointer;
+}
+
+
+:root {
+    --grid-size: 4; 
+    --tile-size: 100px; 
 }
