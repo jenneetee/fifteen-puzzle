@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const backgroundSelector = document.getElementById("background-selector");
     const gridSizeSelector = document.getElementById("grid-size-selector");
     const timerElement = document.getElementById("timer");
+    const backgroundMusic = document.getElementById("game-music"); // Reference to the audio element
     const tileSize = 100;
     let gridSize = 4;
     let tiles = [];
@@ -13,6 +14,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let elapsedTime = 0;
     let gameInitialized = false; // Flag to track game initialization
     let moveCounter = 0;
+
+    // Play music button
+    const playMusicButton = document.createElement("button");
+    playMusicButton.textContent = "Play Music";
+    document.body.appendChild(playMusicButton);
+
+    // Initialize music settings
+    backgroundMusic.loop = true; // Ensure music loops
+    backgroundMusic.volume = 0.5; // Set default volume
+
+    // Autoplay (may fail due to restrictions)
+    backgroundMusic.play().catch(() => {
+        console.log("Autoplay blocked. Waiting for user interaction.");
+    });
+
+    // Play/Pause toggle
+    playMusicButton.addEventListener("click", () => {
+        if (backgroundMusic.paused) {
+            backgroundMusic.play().catch((error) => {
+                console.error("Error playing music:", error);
+            });
+            playMusicButton.textContent = "Pause Music";
+        } else {
+            backgroundMusic.pause();
+            playMusicButton.textContent = "Play Music";
+        }
+    });
 
     const moveCounterDisplay = document.createElement("div");
     moveCounterDisplay.id = "move-counter";
@@ -198,13 +226,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function resetGame() {
-        gameInitialized = false; // Reset game state
-        createTiles(); // Create new tiles
-        resetTimer(); // Reset the timer
-        resetMoveCounter(); // Reset the move counter
-        updateHoverEffects(); // Reset hover effects
-        backgroundMusic.pause(); // Stop the music when game resets
-        backgroundMusic.currentTime = 0; // Reset the song to the beginning
+        gameInitialized = false;
+        createTiles();
+        resetTimer();
+        resetMoveCounter();
+        updateHoverEffects();
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
     }
 
     function newGame() {
@@ -236,15 +264,4 @@ document.addEventListener("DOMContentLoaded", () => {
     newGameButton.addEventListener("click", newGame);
     backgroundSelector.addEventListener("change", updateTileBackground);
     gridSizeSelector.addEventListener("change", changeGridSize);
-
-    // Play music as soon as the page is loaded
-    backgroundMusic.play();
 });
-
-function startGame() {
-    window.location.href = "fifteen.html"; 
-  }
-  
-  function viewInstructions() {
-    window.location.href = "instruction.html";
-  }
