@@ -3,38 +3,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const shuffleButton = document.getElementById("shuffle-button");
     const newGameButton = document.getElementById("new-game-button");
     const backgroundSelector = document.getElementById("background-selector");
+    const gridSizeSelector = document.getElementById("grid-size-selector");
     const timerElement = document.getElementById("timer");
-    const gridSize = 4;
     const tileSize = 100;
+    let gridSize = 4;
     let tiles = [];
-    let blankPosition = { x: 3, y: 3 };
+    let blankPosition = { x: gridSize - 1, y: gridSize - 1 };
     let timerInterval = null;
     let elapsedTime = 0;
     let gameInitialized = false; // Flag to track game initialization
-    let moveCounter = 0; // Move counter
+    let moveCounter = 0;
 
-    // Audio element for background music
-    const backgroundMusic = document.getElementById("game-music");
-
-    // Create and display move counter
     const moveCounterDisplay = document.createElement("div");
     moveCounterDisplay.id = "move-counter";
     moveCounterDisplay.style.marginTop = "10px";
     moveCounterDisplay.textContent = `Moves Made: ${moveCounter}`;
     document.body.insertBefore(moveCounterDisplay, puzzleContainer.nextSibling);
 
-    // Function to update the move counter display
     function updateMoveCounter() {
         moveCounterDisplay.textContent = `Moves Made: ${moveCounter}`;
     }
 
-    // Function to reset the move counter
     function resetMoveCounter() {
         moveCounter = 0;
         updateMoveCounter();
     }
 
-    // Update hover effects for tiles
     function updateHoverEffects() {
         tiles.flat().forEach((tile) => {
             if (tile) {
@@ -49,14 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // initialize puzzle grid
     function createTiles() {
         puzzleContainer.innerHTML = "";
         tiles = [];
         for (let row = 0; row < gridSize; row++) {
             tiles[row] = [];
             for (let col = 0; col < gridSize; col++) {
-                if (row === 3 && col === 3) {
+                if (row === gridSize - 1 && col === gridSize - 1) {
                     tiles[row][col] = null;
                 } else {
                     const tile = document.createElement("div");
@@ -69,17 +62,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-        blankPosition = { x: 3, y: 3 };
+        blankPosition = { x: gridSize - 1, y: gridSize - 1 };
         updateHoverEffects();
         updateTileBackground();
     }
 
-    // Update the position of a tile using CSS transform
     function updateTilePosition(tile, x, y) {
         tile.style.transform = `translate(${x * tileSize}px, ${y * tileSize}px)`;
     }
 
-    // Update the background image of all tiles
     function updateTileBackground() {
         const selectedBackground = backgroundSelector.value;
         tiles.flat().forEach((tile) => {
@@ -87,36 +78,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 tile.style.backgroundImage = `url(${selectedBackground})`;
             }
         });
-        resetMoveCounter(); // Reset move counter when the background is updated
+        resetMoveCounter();
     }
 
-    // Check if a tile can move into the blank space
     function isMovable(row, col) {
-        const dx = Math.abs(blankPosition.x - col);
-        const dy = Math.abs(blankPosition.y - row);
-        return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
+        return row === blankPosition.y || col === blankPosition.x;
     }
 
-    // Move the tile into the blank position
     function moveTile(row, col) {
         if (isMovable(row, col)) {
-            const tile = tiles[row][col];
-            tiles[blankPosition.y][blankPosition.x] = tile;
-            tiles[row][col] = null;
-            updateTilePosition(tile, blankPosition.x, blankPosition.y);
+            if (row === blankPosition.y) {
+                const direction = col > blankPosition.x ? 1 : -1;
+                for (let c = blankPosition.x; c !== col; c += direction) {
+                    const tile = tiles[row][c + direction];
+                    tiles[row][c] = tile;
+                    updateTilePosition(tile, c, row);
+                }
+                tiles[row][col] = null;
+            } else if (col === blankPosition.x) {
+                const direction = row > blankPosition.y ? 1 : -1;
+                for (let r = blankPosition.y; r !== row; r += direction) {
+                    const tile = tiles[r + direction][col];
+                    tiles[r][col] = tile;
+                    updateTilePosition(tile, col, r);
+                }
+                tiles[row][col] = null;
+            }
+
             blankPosition = { x: col, y: row };
             updateHoverEffects();
 
-            // Increment move counter on valid move
             moveCounter++;
             updateMoveCounter();
 
-            // Check if the puzzle is completed after every move
             if (gameInitialized && isPuzzleComplete()) {
                 setTimeout(() => {
-                    showPopup(elapsedTime); // Pass elapsed time to the popup
-                }, 100); // Delay slightly to allow last move animation
-                stopTimer(); // Stop the timer when the puzzle is solved
+                    showPopup(elapsedTime);
+                }, 100);
+                stopTimer();
             }
         }
     }
@@ -139,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Check if the puzzle is solved
     function isPuzzleComplete() {
         let correct = true;
         for (let row = 0; row < gridSize; row++) {
@@ -174,14 +172,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         resetTimer();
-        resetMoveCounter(); // Reset move counter on shuffle
+        resetMoveCounter();
         startTimer();
-        gameInitialized = true; // Mark the game as initialized
+        gameInitialized = true;
     }
 
-    // Timer Functions
     function startTimer() {
-        if (timerInterval) clearInterval(timerInterval); // clears prev intervals
+        if (timerInterval) clearInterval(timerInterval);
         elapsedTime = 0;
         timerElement.textContent = elapsedTime;
         timerInterval = setInterval(() => {
@@ -191,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function stopTimer() {
-        clearInterval(timerInterval); // Stops when puzzle is solved
+        clearInterval(timerInterval);
     }
 
     function resetTimer() {
@@ -200,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
         timerElement.textContent = elapsedTime;
     }
 
-    // Reset game after completion or a new game
     function resetGame() {
         gameInitialized = false; // Reset game state
         createTiles(); // Create new tiles
@@ -211,19 +207,20 @@ document.addEventListener("DOMContentLoaded", () => {
         backgroundMusic.currentTime = 0; // Reset the song to the beginning
     }
 
-    // Start a new game
     function newGame() {
         resetGame();
         startTimer();
-        backgroundMusic.play(); // Start playing the song when a new game starts
     }
 
-    // Initialize the game
+    function changeGridSize() {
+        gridSize = parseInt(gridSizeSelector.value);
+        resetGame();
+    }
+
     createTiles();
     updateHoverEffects();
-    shuffleTiles(); // Shuffle tiles at the start of the game
+    shuffleTiles();
 
-    // Event listeners
     puzzleContainer.addEventListener("click", (event) => {
         if (event.target.classList.contains("tile")) {
             const transform = event.target.style.transform.match(/translate\((.*?)px, (.*?)px\)/);
@@ -231,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = parseInt(transform[2]) / tileSize;
             moveTile(row, col);
 
-            // Start the timer on the first move
             if (elapsedTime === 0) startTimer();
         }
     });
@@ -239,7 +235,16 @@ document.addEventListener("DOMContentLoaded", () => {
     shuffleButton.addEventListener("click", shuffleTiles);
     newGameButton.addEventListener("click", newGame);
     backgroundSelector.addEventListener("change", updateTileBackground);
+    gridSizeSelector.addEventListener("change", changeGridSize);
 
     // Play music as soon as the page is loaded
     backgroundMusic.play();
 });
+
+function startGame() {
+    window.location.href = "fifteen.html"; 
+  }
+  
+  function viewInstructions() {
+    window.location.href = "instruction.html";
+  }
